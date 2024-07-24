@@ -11,14 +11,15 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-def main(comm):
+
+def main():
 	CHUNK = 1024 * 2     # How many samples are we reading per time to analyze
 	FORMAT = pa.paInt16  # pyaudio format, 16 bit depth is more than enough here
 	CHANNELS = 1         # Since we only want one cool looking plot anyway, this suffices
 	RATE = 48000         # sample rate in Hz of incoming audio (44100 is default on my windows pc, but the stereo player does 48000, which is higher. And bigger=better no?)
 	INDEX = 1            # Device index used as input for stream, if the stereo device is enabled it should be at 1
 	scale = 1            # plot scaling
-	verbose=True         # Nerd stats
+	verbose=False         # Nerd stats
 
 	# Open pyaduio object
 	p = pa.PyAudio()
@@ -48,63 +49,37 @@ def main(comm):
 
 	vol=5000
 
-	# numbars=21
-	# x=np.linspace(0.25,1.75,numbars)
-	# width=np.ones(numbars)*1.5/(numbars-1)
-	# volinit=np.ones(numbars)*vol
-
-	# fig, (ax) = plt.subplots(1)
-	# fig.suptitle(f"FPS: {round(1/(CHUNK/RATE),3)}")
-	# #line,  = ax.plot(x,plot_vol)
-	# line = ax.bar(x,volinit,width=width,color='red')
-	# ax.set_ylim(0,100/scale)
-	# fig.show()
-	# print(len(line))
 	data=b'0'
 
 	devices = AudioUtilities.GetSpeakers()
 	interface = devices.Activate(
 		IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 	volume = cast(interface, POINTER(IAudioEndpointVolume))
+	
+	# Get the current volume level
+	
 
-	while True:
+	sys_vols  = np.zeros(1000)
+	vols      = np.zeros(1000)
+	i = 0
+	while i<1000:
 		# Reading and unpacking data
 		#print(f"{int.from_bytes(data,'little')}:{vol}")
 		data = stream.read(CHUNK)
 		dataInt = struct.unpack(str(CHUNK) + 'h', data) # h indicates the short type, a 2 byte (16 bit) signed integer. So from -32767 to 32767 (hence the ylims above)
 		vol=np.max(dataInt)
-		vol=int((vol*255)/(32767))
-		print(f"{vol}   ",end='\r')
-		data = comm.read()
-		data_to_write=int.to_bytes(vol,1,'little')
-		comm.write(data_to_write)
+		vol=int((vol/32767)*255)
+		sys_vol = volume.GetMasterVolumeLevelScalar()
+		print(f"{vol} and {sys_vol:.3f} and {i}   ",end='\r')
+		sys_vols[i]=sys_vol
+		vols[i]    =vol
+		i+=1
 
-
-
-
-		
-		# for i in range(int(len(line)/2)+1):
-		# 	line[i].set_height(vol/(2**((numbars-1)/2-i)))
-		# 	line[-(i+1)].set_height(vol/(2**((numbars-1)/2-i)))
-
-
-		# # line[0].set_height(vol/8)
-		# # line[1].set_height(vol/4)
-		# # line[2].set_height(vol/2)
-		# # line[3].set_height(vol)
-		# # line[4].set_height(vol/2)
-		# # line[5].set_height(vol/4)
-		# # line[6].set_height(vol/8)
-		# fig.canvas.draw()
-		# fig.canvas.flush_events()
+	plt.plot(np.sort(sys_vols),np.sort(vols))
+	plt.show()
 
 if __name__=="__main__":
-	try:
-		print("Starting Analysis")
-		comm = serial.Serial(port='COM7',baudrate=115200,timeout=0.1) # with this baud rate a byte is sent every ~0.00008680555 seconds
-		time.sleep(1) #give the connection a second to settle
-		comm.write(10)
-		main(comm)
-	except KeyboardInterrupt:
-		print("Stopping Analysis")
-		comm.close()
+	print("Starting Analysis")
+	time.sleep(1) #give the connection a second to settle
+	main()
+	print("Hello?")
