@@ -1,18 +1,17 @@
 #include <FastLED.h>
-#define NUM_LEDS 85
+#define NUM_LEDS 187
 #define DATA_PIN 2 //How boring and obvious!
 #define COLOR_ORDER GRB //Green (G), Red (R), Blue (B)
 #define CHIPSET WS2812B
 #define BRIGHTNESS 50
 #define VOLTS 5
-#define MAX_AMPS 500 //value in milliamps
+#define MAX_AMPS 5000 //value in milliamps
 
 //ENOUGH NONSENSE!
 
 CRGB leds[NUM_LEDS];
 int incomingByte; // for incoming serial data
-int DEL=50;
-
+int flip=0;
 
 void setup() {
 
@@ -23,20 +22,17 @@ FastLED.clear();
 FastLED.show(); 
 Serial.begin(115200); // opens serial port, sets data rate to 115200 bps
 
-//LEDIA IS ALIVE!!!!!!!!!!!!!!!!!!!!
+//LYDIA IS ALIVE!!!!!!!!!!!!!!!!!!!!
 
 }
 
-void loop() {
+void loop() { //Swirly, twirly effect
+  
   for (int i=0; i<NUM_LEDS; i++) {
-    leds[i]=CHSV(255,255,255);
+    leds[i] = CRGB(255,0,0);
+      
+    
   }
-  delay(DEL);
+  
   FastLED.show();
-  for (int i=0; i<NUM_LEDS; i++) {
-    leds[i]=CHSV(0,0,0);
-  }
-  delay(DEL);
-  FastLED.show();
-
 }

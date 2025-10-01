@@ -1,9 +1,9 @@
 #include <FastLED.h>
-#define NUM_LEDS 6
+#define NUM_LEDS 187
 #define DATA_PIN 2 //How boring and obvious!
 #define COLOR_ORDER GRB //Green (G), Red (R), Blue (B)
 #define CHIPSET WS2812B
-#define BRIGHTNESS 50
+#define BRIGHTNESS 75
 #define VOLTS 5
 #define MAX_AMPS 500 //value in milliamps
 
@@ -11,6 +11,7 @@
 
 CRGB leds[NUM_LEDS];
 int incomingByte; // for incoming serial data
+int comp; // scaling thing
 
 
 void setup() {
@@ -35,8 +36,9 @@ void loop() { //Swirly, twirly effect
   }
 
   for (int i = 0; i < NUM_LEDS; i++) {
-    if (i < incomingByte/3) { // I scale the incoming byte here to match the fact that I can only power 6 leds with the arduino
-      leds[i] = CHSV(beatsin8(10), 255, 125);
+    comp = incomingByte/255*NUM_LEDS; // Scale the incoming byte to the number of LEDs
+    if (i < incomingByte) { 
+      leds[i] = CHSV(beatsin8(20), 255, 125);
     }
     else {
       leds[i] = CRGB(0, 0, 0);

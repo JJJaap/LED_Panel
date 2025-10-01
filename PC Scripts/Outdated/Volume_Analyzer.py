@@ -7,16 +7,16 @@ import time
 import sys
 import pandas as pd 
 
-from ctypes import cast, POINTER
-from comtypes import CLSCTX_ALL
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+# from ctypes import cast, POINTER
+# from comtypes import CLSCTX_ALL
+# from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 def main(comm):
 	CHUNK = 1024 * 2     # How many samples are we reading per time to analyze
 	FORMAT = pa.paInt16  # pyaudio format, 16 bit depth is more than enough here
 	CHANNELS = 1         # Since we only want one cool looking plot anyway, this suffices
 	RATE = 48000         # sample rate in Hz of incoming audio (44100 is default on my windows pc, but the stereo player does 48000, which is higher. And bigger=better no?)
-	INDEX = 1            # Device index used as input for stream, if the stereo device is enabled it should be at 1
+	INDEX = 13          # Device index used as input for stream, if the stereo device is enabled it should be at 1
 	scale = 1            # plot scaling
 	verbose=True         # Nerd stats
 
@@ -62,10 +62,10 @@ def main(comm):
 	# print(len(line))
 	data=b'0'
 
-	devices = AudioUtilities.GetSpeakers()
-	interface = devices.Activate(
-		IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-	volume = cast(interface, POINTER(IAudioEndpointVolume))
+	# devices = AudioUtilities.GetSpeakers()
+	# interface = devices.Activate(
+	# 	IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+	# volume = cast(interface, POINTER(IAudioEndpointVolume))
 
 	while True:
 		# Reading and unpacking data
@@ -101,7 +101,7 @@ def main(comm):
 if __name__=="__main__":
 	try:
 		print("Starting Analysis")
-		comm = serial.Serial(port='COM7',baudrate=115200,timeout=0.1) # with this baud rate a byte is sent every ~0.00008680555 seconds
+		comm = serial.Serial(port='COM4',baudrate=115200,timeout=0.1) # with this baud rate a byte is sent every ~0.00008680555 seconds
 		time.sleep(1) #give the connection a second to settle
 		comm.write(10)
 		main(comm)
