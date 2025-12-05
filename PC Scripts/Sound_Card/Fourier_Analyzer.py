@@ -72,7 +72,7 @@ def main(comm,ard=False,plot=False,verbose=False):
 				volume_RMS = np.sqrt(np.mean(data**2))*scaling # Magic number scaling to get nicer numbers
 				
 				if volume_RMS > 1.0:
-					# Clamp to [0, 1], important later since we can only send 1 byte to the arduino
+					# Clamp max value to 1.0, important since we (currently) can only send 1 byte to the arduino
 					volume_RMS = 1.0 
 
 				if ard:

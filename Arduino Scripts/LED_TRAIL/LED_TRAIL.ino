@@ -3,9 +3,9 @@
 #define DATA_PIN 2 //How boring and obvious!
 #define COLOR_ORDER GRB //Green (G), Red (R), Blue (B)
 #define CHIPSET WS2812B
-#define BRIGHTNESS 25
+#define BRIGHTNESS 50
 #define VOLTS 5
-#define MAX_AMPS 7500 //value in milliamps
+#define MAX_AMPS 10000 //value in milliamps
 
 //ENOUGH NONSENSE!
 
@@ -41,19 +41,19 @@ void loop() { //Swirly, twirly effect
   for (int i = 0; i < NUM_LEDS; i++) {
     if (i < thresh) {
       leds[i] = CHSV(beatsin8(10), 255, 125);
-      // leds[i] = CRGB(255,0,0);
+      //leds[i] = CRGB(255,0,0);
     } else {
       
       leds[i].fadeToBlackBy(10);
       
       // If not blue fade toward blue first
-      // if ((leds[i].r > 0)||(leds[i].g > 0)) {
-      //   leds[i].r = max(0, leds[i].r - 10);   // decrease red
-      //   leds[i].g = max(0, leds[i].g - 10);   // decrease green
-      //   leds[i].b = min(255, leds[i].b + 10); // increase blue
-      // } else {
-      //   leds[i].fadeToBlackBy(10); // then fade blue to black
-      // }
+      if ((leds[i].r > 0)||(leds[i].g > 0)) {
+        leds[i].r = max(0, leds[i].r - 10);   // decrease red
+        leds[i].g = max(0, leds[i].g - 10);   // decrease green
+        leds[i].b = min(255, leds[i].b + 10); // increase blue
+      } else {
+        leds[i].fadeToBlackBy(10); // then fade blue to black
+      }
     }
   }
   

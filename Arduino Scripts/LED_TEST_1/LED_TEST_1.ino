@@ -1,11 +1,11 @@
 #include <FastLED.h>
-#define NUM_LEDS 187
+#define NUM_LEDS 221
 #define DATA_PIN 2 //How boring and obvious!
 #define COLOR_ORDER GRB //Green (G), Red (R), Blue (B)
 #define CHIPSET WS2812B
 #define BRIGHTNESS 75
 #define VOLTS 5
-#define MAX_AMPS 500 //value in milliamps
+#define MAX_AMPS 10000 //value in milliamps
 
 //ENOUGH NONSENSE!
 

@@ -1,5 +1,5 @@
 #include <FastLED.h>
-#define NUM_LEDS 187
+#define NUM_LEDS 221
 #define DATA_PIN 2 //How boring and obvious!
 #define COLOR_ORDER GRB //Green (G), Red (R), Blue (B)
 #define CHIPSET WS2812B
